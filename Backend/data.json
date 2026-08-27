@@ -1,0 +1,21 @@
+{
+  "users": [
+    {
+      "id": "feb4b7b7-afa8-4ab9-88b7-b79e9e13e952",
+      "name": "Samya Mohanty",
+      "email": "mohantysamya127@gmail.com",
+      "role": "patient",
+      "passwordHash": "3de38b0cd9ac4bc1251cf30fbc6551fa:44a932275fd15ad22d5ace47d4505593a0fdbcd2a60a27d554e95fe7503d22983888cf6c4fd47879f271eb58366b3812e6480fd4009d106c4bbfec609d1db31c",
+      "createdAt": "2026-08-24T04:19:38.106Z"
+    },
+    {
+      "id": "4a80149c-f823-4ca1-9db0-125521769371",
+      "name": "CORS Check",
+      "email": "check-1787545228@example.com",
+      "role": "patient",
+      "passwordHash": "8e26a8319a71092eaef06f18dbbf57f0:d039afef777cb936ecdc3131f59f935a3bc12f515ded28d46f0062edccb99fec6ccd9b001a323a49e39f2cfc3bafc2312df00634d7dc2c18d5322dbf311060b0",
+      "createdAt": "2026-08-24T04:20:28.650Z"
+    }
+  ],
+  "reports": []
+}
