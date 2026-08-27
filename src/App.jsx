@@ -1103,8 +1103,8 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
           setApiData({
             reportCount: reportsResult.data?.length || 0,
             heatmapData: liveHeatmapData,
-          drugs: [...new Set(liveHeatmapData.flatMap((row) => Object.keys(row.drugs)))],
-          isLive: liveHeatmapData.length > 0,
+            drugs: allDrugs,
+            isLive: liveHeatmapData.length > 0,
           });
         }
       })
@@ -1351,11 +1351,21 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
   const heatmapData = apiData?.heatmapData?.length ? apiData.heatmapData : fallbackHeatmapData;
   const drugs = apiData?.drugs?.length ? apiData.drugs : fallbackDrugs;
 
-  const completeHeatmapData = heatmapData.map((row) => {
-    const fallbackRow = fallbackHeatmapData.find((item) => item.organism === row.organism);
+  const allDrugs = [...new Set([...fallbackDrugs, ...drugs])];
+
+  const fallbackOrganisms = new Set(fallbackHeatmapData.map((row) => row.organism));
+  const liveOrganisms = new Set(heatmapData.map((row) => row.organism));
+  const allOrganisms = new Set([...fallbackOrganisms, ...liveOrganisms]);
+
+  const completeHeatmapData = Array.from(allOrganisms).map((organism) => {
+    const liveRow = heatmapData.find((row) => row.organism === organism);
+    const fallbackRow = fallbackHeatmapData.find((row) => row.organism === organism);
     return {
-      ...row,
-      drugs: { ...(fallbackRow?.drugs || {}), ...(row.drugs || {}) },
+      organism,
+      drugs: {
+        ...(fallbackRow?.drugs || {}),
+        ...(liveRow?.drugs || {}),
+      },
     };
   });
   const resistanceChart = apiData?.resistanceChart || fallbackResistanceChart;
@@ -1567,7 +1577,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
               value={reportForm.drug}
               onChange={(event) => setReportForm({ ...reportForm, drug: event.target.value })}
             >
-              {drugs.map((drug) => <option key={drug}>{drug}</option>)}
+              {allDrugs.map((drug) => <option key={drug}>{drug}</option>)}
             </select>
             <div className="computed-rate" aria-live="polite">
               Resistance rate:
@@ -1754,7 +1764,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
                 BACTERIA
               </div>
 
-              {drugs.map((drug) => (
+              {allDrugs.map((drug) => (
 
                 <div
                   className="heat-header"
@@ -1774,7 +1784,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
                     {row.organism}
                   </div>
 
-                  {drugs.map((drug) => {
+                  {allDrugs.map((drug) => {
 
                     const rawRate = row.drugs[drug];
 
