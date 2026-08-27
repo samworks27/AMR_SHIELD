@@ -1,6 +1,44 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "./lib/supabase";
 
+function useReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+}
+
+function useCountUp(target, duration = 1800) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    const start = performance.now();
+    const step = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(eased * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    const timer = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(timer);
+  }, [target, duration]);
+  return count;
+}
+
+function CountUp({ target, suffix = "" }) {
+  const count = useCountUp(target);
+  return <strong>{count}{suffix}</strong>;
+}
+
 /* =====================================================
    LOGO
 ===================================================== */
@@ -25,8 +63,27 @@ function Logo() {
 ===================================================== */
 
 function LandingPage({ onEnter }) {
+  useReveal();
+  const microbes = ["🦠", "💊", "🧬", "🩺", "🔬", "🧫", "🦠", "💊", "🧬", "🩺", "🔬", "🧫", "🦠", "💊", "🧬"];
+  const particles = microbes.map((emoji, i) => (
+    <div
+      key={i}
+      className="microbe"
+      aria-hidden="true"
+      style={{
+        left: `${Math.random() * 94}%`,
+        animationDuration: `${18 + Math.random() * 22}s`,
+        animationDelay: `${Math.random() * 15}s`,
+        fontSize: `${16 + Math.random() * 22}px`,
+      }}
+    >
+      {emoji}
+    </div>
+  ));
+
   return (
     <div className="landing-page">
+      <div className="landing-particles" aria-hidden="true">{particles}</div>
 
       <header className="navbar">
         <Logo />
@@ -42,7 +99,9 @@ function LandingPage({ onEnter }) {
 
       <main>
 
-        <section className="hero">
+        {/* HERO */}
+
+        <section className="hero reveal">
 
           <div className="hero-content">
 
@@ -88,9 +147,21 @@ function LandingPage({ onEnter }) {
 
             </div>
 
-            <div className="trust-line">
-              <span>●</span>
-              Built for smarter antimicrobial surveillance
+            <div className="hero-stats">
+              <div className="stat">
+                <CountUp target={10} suffix="K+" />
+                <span>Patients</span>
+              </div>
+              <div className="stat-divider"></div>
+              <div className="stat">
+                <CountUp target={50} suffix="+" />
+                <span>Hospitals</span>
+              </div>
+              <div className="stat-divider"></div>
+              <div className="stat">
+                <CountUp target={200} suffix="+" />
+                <span>Drugs monitored</span>
+              </div>
             </div>
 
           </div>
@@ -159,14 +230,18 @@ function LandingPage({ onEnter }) {
 
             </div>
 
+            <div className="floating-icon icon-1" aria-hidden="true">🦠</div>
+            <div className="floating-icon icon-2" aria-hidden="true">💊</div>
+            <div className="floating-icon icon-3" aria-hidden="true">🧬</div>
+            <div className="floating-icon icon-4" aria-hidden="true">🩺</div>
+
           </div>
 
         </section>
 
-        <section
-          className="mission"
-          id="mission"
-        >
+        {/* MISSION */}
+
+        <section className="mission reveal" id="mission">
 
           <div className="section-label">
             WHY AMR SHIELD
@@ -184,9 +259,29 @@ function LandingPage({ onEnter }) {
             information easier to understand, compare and monitor.
           </p>
 
+          <div className="mission-cards">
+            <div className="mission-card">
+              <div className="mission-icon" aria-hidden="true">🔍</div>
+              <h3>Explainable</h3>
+              <p>Transparent reasoning behind every resistance signal and recommendation.</p>
+            </div>
+            <div className="mission-card">
+              <div className="mission-icon" aria-hidden="true">🤝</div>
+              <h3>Collaborative</h3>
+              <p>Connects patients, doctors and hospitals in one secure workflow.</p>
+            </div>
+            <div className="mission-card">
+              <div className="mission-icon" aria-hidden="true">📊</div>
+              <h3>Data-driven</h3>
+              <p>Live surveillance, heatmaps and antibiograms updated from real observations.</p>
+            </div>
+          </div>
+
         </section>
 
-        <section className="quote-section">
+        {/* QUOTE */}
+
+        <section className="quote-section reveal">
 
           <div className="quote-mark">
             “
@@ -204,6 +299,135 @@ function LandingPage({ onEnter }) {
             AMR SHIELD
           </p>
 
+        </section>
+
+        {/* IMPACT NUMBERS */}
+
+        <section className="impact-section reveal">
+
+          <div className="section-label">
+            IMPACT
+          </div>
+
+          <h2>
+            Built for real-world <span>antimicrobial stewardship</span>
+          </h2>
+
+          <div className="impact-grid">
+            <div className="impact-card">
+              <div className="impact-icon" aria-hidden="true">🏥</div>
+              <strong>Hospitals</strong>
+              <p>Monitor resistance trends, antibiograms and surveillance indicators across wards.</p>
+            </div>
+            <div className="impact-card">
+              <div className="impact-icon" aria-hidden="true">👨‍⚕️</div>
+              <strong>Doctors</strong>
+              <p>Review patient history, investigations and explainable AI signals before prescribing.</p>
+            </div>
+            <div className="impact-card">
+              <div className="impact-icon" aria-hidden="true">🧑</div>
+              <strong>Patients</strong>
+              <p>Share symptoms securely, understand reports and access trusted drug information.</p>
+            </div>
+            <div className="impact-card">
+              <div className="impact-icon" aria-hidden="true">🧪</div>
+              <strong>Laboratories</strong>
+              <p>Culture and AST results linked to organism-level resistance intelligence.</p>
+            </div>
+          </div>
+
+        </section>
+
+        {/* HOW IT WORKS */}
+
+        <section className="steps-section reveal">
+
+          <div className="section-label">
+            HOW IT WORKS
+          </div>
+
+          <h2>
+            From data to <span>decision</span> in minutes
+          </h2>
+
+          <div className="steps">
+            <div className="step">
+              <div className="step-number">1</div>
+              <div className="step-icon" aria-hidden="true">📋</div>
+              <h3>Share context</h3>
+              <p>Patients submit symptoms, temperature, antibiotics and allergy history.</p>
+            </div>
+            <div className="step-connector" aria-hidden="true"></div>
+            <div className="step">
+              <div className="step-number">2</div>
+              <div className="step-icon" aria-hidden="true">🧬</div>
+              <h3>Analyze resistance</h3>
+              <p>Doctors review organism-level heatmaps, antibiograms and culture results.</p>
+            </div>
+            <div className="step-connector" aria-hidden="true"></div>
+            <div className="step">
+              <div className="step-number">3</div>
+              <div className="step-icon" aria-hidden="true">💡</div>
+              <h3>Review signals</h3>
+              <p>Transparent phenotype scoring supports — but does not replace — clinical judgement.</p>
+            </div>
+            <div className="step-connector" aria-hidden="true"></div>
+            <div className="step">
+              <div className="step-number">4</div>
+              <div className="step-icon" aria-hidden="true">✅</div>
+              <h3>Act safely</h3>
+              <p>Save assessments, track outcomes and improve antimicrobial stewardship.</p>
+            </div>
+          </div>
+
+        </section>
+
+        {/* TESTIMONIALS */}
+
+        <section className="testimonials-section reveal">
+
+          <div className="section-label">
+            VOICES
+          </div>
+
+          <h2>
+            Trusted by <span>healthcare teams</span>
+          </h2>
+
+          <div className="testimonials">
+            <div className="testimonial">
+              <div className="testimonial-avatar" aria-hidden="true">👨‍⚕️</div>
+              <blockquote>
+                “AMR SHIELD makes resistance patterns easier to explain to patients and supports safer prescribing decisions.”
+              </blockquote>
+              <p className="testimonial-author">— Dr. Arjun Mehta, Infectious Disease Specialist</p>
+            </div>
+            <div className="testimonial">
+              <div className="testimonial-avatar" aria-hidden="true">👩</div>
+              <blockquote>
+                “I can share my symptoms and previous antibiotics with my doctor in one place. It feels organised and private.”
+              </blockquote>
+              <p className="testimonial-author">— Priya S., Patient</p>
+            </div>
+            <div className="testimonial">
+              <div className="testimonial-avatar" aria-hidden="true">🏥</div>
+              <blockquote>
+                “The hospital dashboard helps us monitor quarterly resistance trends and coordinate care across departments.”
+              </blockquote>
+              <p className="testimonial-author">— City General Hospital, Microbiology Dept.</p>
+            </div>
+          </div>
+
+        </section>
+
+        {/* CTA */}
+
+        <section className="cta-section reveal">
+          <h2>Ready to explore?</h2>
+          <p>Join the network using AMR SHIELD for smarter antimicrobial decisions.</p>
+          <button className="primary-button large" onClick={onEnter}>
+            Enter AMR SHIELD <span>→</span>
+          </button>
         </section>
 
       </main>
@@ -2574,58 +2798,68 @@ function App() {
           {/* PAGE 1 — LANDING */}
 
           {page === "landing" && (
-
-            <LandingPage
-              onEnter={() =>
-                setPage("portal")
-              }
-            />
-
+            <div className="page-enter" key="landing">
+              <LandingPage
+                onEnter={() =>
+                  setPage("portal")
+                }
+              />
+            </div>
           )}
 
           {/* PAGE 2 — PORTAL */}
 
           {page === "portal" && (
-
-            <PortalPage
-              onBack={() =>
-                setPage("landing")
-              }
-              onSelect={selectRole}
-            />
+            <div className="page-enter" key="portal">
+              <PortalPage
+                onBack={() =>
+                  setPage("landing")
+                }
+                onSelect={selectRole}
+              />
+            </div>
 
           )}
 
           {/* PAGE 3 — AUTH */}
 
           {page === "auth" && role && (
-
-            <AuthPage
-              role={role}
-              onBack={goBackToPortal}
-              onContinue={goToDashboard}
-            />
+            <div className="page-enter" key="auth">
+              <AuthPage
+                role={role}
+                onBack={goBackToPortal}
+                onContinue={goToDashboard}
+              />
+            </div>
 
           )}
 
           {/* PAGE 4 — RESISTANCE DASHBOARD */}
 
           {page === "dashboard" && role && (
-            role === "doctor" ? <DoctorWorkspace onBack={() => setPage("auth")} onViewProfile={goToProfile} /> : <ResistanceDashboard role={role} onPredict={() => setPage("prediction")} onBack={() => setPage("auth")} onViewProfile={goToProfile} />
+            <div className="page-enter" key={role}>
+              {role === "doctor" ? <DoctorWorkspace onBack={() => setPage("auth")} onViewProfile={goToProfile} /> : <ResistanceDashboard role={role} onPredict={() => setPage("prediction")} onBack={() => setPage("auth")} onViewProfile={goToProfile} />}
+            </div>
 
           )}
 
           {page === "profile" && role && (
-            <ProfilePage
-              role={role}
-              onBack={() => setPage("dashboard")}
-            />
+            <div className="page-enter" key="profile">
+              <ProfilePage
+                role={role}
+                onBack={() => setPage("dashboard")}
+              />
+            </div>
+
           )}
 
           {page === "prediction" && role && (
-            <PredictionPage
-              onBack={() => setPage("dashboard")}
-            />
+            <div className="page-enter" key="prediction">
+              <PredictionPage
+                onBack={() => setPage("dashboard")}
+              />
+            </div>
+
           )}
         </>
       )}
