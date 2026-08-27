@@ -2910,14 +2910,7 @@ function App() {
       }
     })();
 
-    return (
-      <div
-        className={`page-transition page-enter ${direction}`}
-        key={page}
-      >
-        {content}
-      </div>
-    );
+    return content;
   };
 
   return (
@@ -2926,8 +2919,10 @@ function App() {
         <div style={{
           minHeight: '100vh',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          gap: '18px',
           background: '#fbf7f2'
         }}>
           <div style={{
@@ -2938,6 +2933,20 @@ function App() {
             borderRadius: '50%',
             animation: 'spin 0.8s linear infinite'
           }} />
+          <button
+            onClick={() => { setRestoring(false); setPage("landing"); }}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#75847f',
+              fontSize: '12px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              textDecoration: 'underline'
+            }}
+          >
+            Skip and go to landing page
+          </button>
         </div>
       )}
       {!restoring && renderPage()}
