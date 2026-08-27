@@ -1350,11 +1350,19 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
 
   const heatmapData = apiData?.heatmapData?.length ? apiData.heatmapData : fallbackHeatmapData;
   const drugs = apiData?.drugs?.length ? apiData.drugs : fallbackDrugs;
+
+  const completeHeatmapData = heatmapData.map((row) => {
+    const fallbackRow = fallbackHeatmapData.find((item) => item.organism === row.organism);
+    return {
+      ...row,
+      drugs: { ...(fallbackRow?.drugs || {}), ...(row.drugs || {}) },
+    };
+  });
   const resistanceChart = apiData?.resistanceChart || fallbackResistanceChart;
   const firstLineAgents = apiData?.firstLineAgents || fallbackFirstLineAgents;
 
   function getReportResistanceRate(organism, drug) {
-    const row = heatmapData.find((item) => item.organism === organism);
+    const row = completeHeatmapData.find((item) => item.organism === organism);
     const exactRate = row?.drugs?.[drug];
     if (Number.isFinite(Number(exactRate))) return Number(exactRate);
     const chartRate = resistanceChart.find((item) => item.name === drug)?.rate;
@@ -1553,7 +1561,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
               value={reportForm.organism}
               onChange={(event) => setReportForm({ ...reportForm, organism: event.target.value })}
             >
-              {heatmapData.map((row) => <option key={row.organism}>{row.organism}</option>)}
+              {completeHeatmapData.map((row) => <option key={row.organism}>{row.organism}</option>)}
             </select>
             <select
               value={reportForm.drug}
@@ -1758,8 +1766,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
               ))}
 
               {/* ROWS */}
-
-              {heatmapData.map((row) => (
+              {completeHeatmapData.map((row) => (
 
                 <React.Fragment key={row.organism}>
 
@@ -1769,10 +1776,12 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
 
                   {drugs.map((drug) => {
 
-                    const rate = row.drugs[drug];
+                    const rawRate = row.drugs[drug];
+
+                    const rate = Number.isFinite(Number(rawRate)) ? Number(rawRate) : null;
 
                     const resistanceClass =
-                      getResistanceClass(rate);
+                      rate === null ? "unavailable" : getResistanceClass(rate);
 
                     return (
 
@@ -1781,7 +1790,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
                         className={`heat-cell ${resistanceClass}`}
                       >
 
-                        {Number.isFinite(Number(rate)) ? `${Number(rate)}%` : "—"}
+                        {rate === null ? "N/A" : `${rate}%`}
 
                         <div className="tooltip">
 
@@ -1794,9 +1803,9 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
                           </span>
 
                           <small>
-                            Resistance rate: {Number.isFinite(Number(rate)) ? `${Number(rate)}%` : "No data"}
+                            Resistance rate: {rate === null ? "No data available" : `${rate}%`}
                             <br />
-                            Status: {Number.isFinite(Number(rate)) ? getResistanceLabel(Number(rate)) : "Unavailable"}
+                            Status: {rate === null ? "Unavailable" : getResistanceLabel(rate)}
                           </small>
 
                         </div>
