@@ -2735,8 +2735,6 @@ function App() {
 
   const [restoring, setRestoring] = useState(true);
 
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
   const [direction, setDirection] = useState("forward");
 
   const forwardPaths = {
@@ -2753,17 +2751,8 @@ function App() {
     const isForward = forwardPaths[page]?.includes(newPage);
     setDirection(isForward ? "forward" : "back");
     setPage(newPage);
+    setDisplayedPage(newPage);
   }
-
-  useEffect(() => {
-    if (page === displayedPage) return;
-    setIsTransitioning(true);
-    const timer = setTimeout(() => {
-      setDisplayedPage(page);
-      setIsTransitioning(false);
-    }, 360);
-    return () => clearTimeout(timer);
-  }, [page]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -2796,8 +2785,7 @@ function App() {
             if (!mounted) return;
             if (data?.role) {
               setRole(data.role);
-              setPage("dashboard");
-              setDisplayedPage("dashboard");
+              navigateTo("dashboard");
             }
             setRestoring(false);
           })
@@ -2818,20 +2806,17 @@ function App() {
             if (!mounted) return;
             if (data?.role) {
               setRole(data.role);
-              setPage("dashboard");
-              setDisplayedPage("dashboard");
+              navigateTo("dashboard");
             }
           })
           .catch(() => {
             if (!mounted) return;
             setRole(null);
-            setPage("landing");
-            setDisplayedPage("landing");
+            navigateTo("landing");
           });
       } else {
         setRole(null);
-        setPage("landing");
-        setDisplayedPage("landing");
+        navigateTo("landing");
       }
     });
 
@@ -2919,7 +2904,7 @@ function App() {
 
     return (
       <div
-        className={`page-transition ${isTransitioning ? "page-exit" : "page-enter"} ${direction}`}
+        className={`page-transition page-enter ${direction}`}
         key={displayedPage}
       >
         {content}
