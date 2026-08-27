@@ -1379,14 +1379,13 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
     return Number.isFinite(Number(chartRate)) ? Number(chartRate) : null;
   }
 
-  const computedResistanceRate = getReportResistanceRate(reportForm.organism, reportForm.drug);
-
   useEffect(() => {
+    const nextRate = getReportResistanceRate(reportForm.organism, reportForm.drug);
     setReportForm((current) => ({
       ...current,
-      resistanceRate: computedResistanceRate === null ? "" : String(computedResistanceRate),
+      resistanceRate: nextRate === null ? "" : String(nextRate),
     }));
-  }, [reportForm.organism, reportForm.drug, computedResistanceRate]);
+  }, [reportForm.organism, reportForm.drug]);
 
   /* =====================================================
      RESISTANCE CLASSIFICATION
