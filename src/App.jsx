@@ -2730,9 +2730,41 @@ function App() {
 
   const [page, setPage] = useState("landing");
 
+  const [displayedPage, setDisplayedPage] = useState("landing");
+
   const [role, setRole] = useState(null);
 
   const [restoring, setRestoring] = useState(true);
+
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const [direction, setDirection] = useState("forward");
+
+  const forwardPaths = {
+    landing: ["portal"],
+    portal: ["auth"],
+    auth: ["dashboard"],
+    dashboard: ["profile", "prediction"],
+    profile: [],
+    prediction: [],
+  };
+
+  function navigateTo(newPage) {
+    if (newPage === page) return;
+    const isForward = forwardPaths[page]?.includes(newPage);
+    setDirection(isForward ? "forward" : "back");
+    setPage(newPage);
+  }
+
+  useEffect(() => {
+    if (page === displayedPage) return;
+    setIsTransitioning(true);
+    const timer = setTimeout(() => {
+      setDisplayedPage(page);
+      setIsTransitioning(false);
+    }, 360);
+    return () => clearTimeout(timer);
+  }, [page]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -2752,7 +2784,7 @@ function App() {
       clearTimeout(timeout);
       observer.disconnect();
     };
-  }, [page]);
+  }, [displayedPage]);
 
   useEffect(() => {
     let mounted = true;
@@ -2766,6 +2798,7 @@ function App() {
             if (data?.role) {
               setRole(data.role);
               setPage("dashboard");
+              setDisplayedPage("dashboard");
             }
             setRestoring(false);
           })
@@ -2787,16 +2820,19 @@ function App() {
             if (data?.role) {
               setRole(data.role);
               setPage("dashboard");
+              setDisplayedPage("dashboard");
             }
           })
           .catch(() => {
             if (!mounted) return;
             setRole(null);
             setPage("landing");
+            setDisplayedPage("landing");
           });
       } else {
         setRole(null);
         setPage("landing");
+        setDisplayedPage("landing");
       }
     });
 
@@ -2810,98 +2846,91 @@ function App() {
 
     setRole(selectedRole);
 
-    setPage("auth");
+    navigateTo("auth");
   }
 
   function goToDashboard() {
 
-    setPage("dashboard");
+    navigateTo("dashboard");
   }
 
   function goBackToPortal() {
 
     setRole(null);
 
-    setPage("portal");
+    navigateTo("portal");
   }
 
   function goToProfile() {
 
-    setPage("profile");
+    navigateTo("profile");
   }
+
+  const renderPage = () => {
+    const content = (() => {
+      switch (displayedPage) {
+        case "landing":
+          return (
+            <LandingPage
+              onEnter={() =>
+                navigateTo("portal")
+              }
+            />
+          );
+        case "portal":
+          return (
+            <PortalPage
+              onBack={() =>
+                navigateTo("landing")
+              }
+              onSelect={selectRole}
+            />
+          );
+        case "auth":
+          return role && (
+            <AuthPage
+              role={role}
+              onBack={goBackToPortal}
+              onContinue={goToDashboard}
+            />
+          );
+        case "dashboard":
+          return role && (
+            role === "doctor"
+              ? <DoctorWorkspace onBack={() => navigateTo("auth")} onViewProfile={goToProfile} />
+              : <ResistanceDashboard role={role} onPredict={() => navigateTo("prediction")} onBack={() => navigateTo("auth")} onViewProfile={goToProfile} />
+          );
+        case "profile":
+          return role && (
+            <ProfilePage
+              role={role}
+              onBack={() => navigateTo("dashboard")}
+            />
+          );
+        case "prediction":
+          return role && (
+            <PredictionPage
+              onBack={() => navigateTo("dashboard")}
+            />
+          );
+        default:
+          return null;
+      }
+    })();
+
+    return (
+      <div
+        className={`page-transition ${isTransitioning ? "page-exit" : "page-enter"} ${direction}`}
+        key={displayedPage}
+      >
+        {content}
+      </div>
+    );
+  };
 
   return (
     <>
-      {!restoring && (
-        <>
-          {/* PAGE 1 — LANDING */}
-
-          {page === "landing" && (
-            <div className="page-enter" key="landing">
-              <LandingPage
-                onEnter={() =>
-                  setPage("portal")
-                }
-              />
-            </div>
-          )}
-
-          {/* PAGE 2 — PORTAL */}
-
-          {page === "portal" && (
-            <div className="page-enter" key="portal">
-              <PortalPage
-                onBack={() =>
-                  setPage("landing")
-                }
-                onSelect={selectRole}
-              />
-            </div>
-
-          )}
-
-          {/* PAGE 3 — AUTH */}
-
-          {page === "auth" && role && (
-            <div className="page-enter" key="auth">
-              <AuthPage
-                role={role}
-                onBack={goBackToPortal}
-                onContinue={goToDashboard}
-              />
-            </div>
-
-          )}
-
-          {/* PAGE 4 — RESISTANCE DASHBOARD */}
-
-          {page === "dashboard" && role && (
-            <div className="page-enter" key={role}>
-              {role === "doctor" ? <DoctorWorkspace onBack={() => setPage("auth")} onViewProfile={goToProfile} /> : <ResistanceDashboard role={role} onPredict={() => setPage("prediction")} onBack={() => setPage("auth")} onViewProfile={goToProfile} />}
-            </div>
-
-          )}
-
-          {page === "profile" && role && (
-            <div className="page-enter" key="profile">
-              <ProfilePage
-                role={role}
-                onBack={() => setPage("dashboard")}
-              />
-            </div>
-
-          )}
-
-          {page === "prediction" && role && (
-            <div className="page-enter" key="prediction">
-              <PredictionPage
-                onBack={() => setPage("dashboard")}
-              />
-            </div>
-
-          )}
-        </>
-      )}
+      {!restoring && renderPage()}
     </>
   );
 }
