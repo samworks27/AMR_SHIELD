@@ -2729,8 +2729,6 @@ function App() {
 
   const [page, setPage] = useState("landing");
 
-  const [displayedPage, setDisplayedPage] = useState("landing");
-
   const [role, setRole] = useState(null);
 
   const [restoring, setRestoring] = useState(true);
@@ -2751,7 +2749,6 @@ function App() {
     const isForward = forwardPaths[page]?.includes(newPage);
     setDirection(isForward ? "forward" : "back");
     setPage(newPage);
-    setDisplayedPage(newPage);
   }
 
   useEffect(() => {
@@ -2772,7 +2769,7 @@ function App() {
       clearTimeout(timeout);
       observer.disconnect();
     };
-  }, [displayedPage]);
+  }, [page]);
 
   useEffect(() => {
     let mounted = true;
@@ -2785,7 +2782,7 @@ function App() {
             if (!mounted) return;
             if (data?.role) {
               setRole(data.role);
-              navigateTo("dashboard");
+              setPage("dashboard");
             }
             setRestoring(false);
           })
@@ -2806,17 +2803,17 @@ function App() {
             if (!mounted) return;
             if (data?.role) {
               setRole(data.role);
-              navigateTo("dashboard");
+              setPage("dashboard");
             }
           })
           .catch(() => {
             if (!mounted) return;
             setRole(null);
-            navigateTo("landing");
+            setPage("landing");
           });
       } else {
         setRole(null);
-        navigateTo("landing");
+        setPage("landing");
       }
     });
 
@@ -2852,7 +2849,7 @@ function App() {
 
   const renderPage = () => {
     const content = (() => {
-      switch (displayedPage) {
+      switch (page) {
         case "landing":
           return (
             <LandingPage
@@ -2905,7 +2902,7 @@ function App() {
     return (
       <div
         className={`page-transition page-enter ${direction}`}
-        key={displayedPage}
+        key={page}
       >
         {content}
       </div>
