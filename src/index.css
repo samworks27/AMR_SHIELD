@@ -551,7 +551,7 @@ button {
   width: 82%;
   max-width: 1350px;
   margin: 0 auto;
-  padding: 70px 0 80px;
+  padding: 50px 0 60px;
 }
 
 .dashboard-heading {
@@ -1718,7 +1718,7 @@ button {
 .doctor-content {
   width: 86%;
   max-width: 1380px;
-  margin: 42px auto 80px;
+  margin: 30px auto 50px;
 }
 
 .doctor-layout {
@@ -2512,10 +2512,12 @@ button {
 .drug-search-form input {
   min-width: 0;
   padding: 13px 15px;
-  border: 0;
+  border: 1px solid rgba(23, 77, 77, 0.15);
   border-radius: 9px;
+  background: rgba(255, 255, 255, 0.9);
   color: #174d4d;
   outline: none;
+  box-shadow: 0 2px 8px rgba(23, 77, 77, 0.06);
 }
 
 .drug-search-form button {
@@ -2532,7 +2534,7 @@ button {
 }
 
 .drug-database-panel .report-message {
-  color: #ffd2bd;
+  color: #b85c49;
 }
 
 .drug-results {
