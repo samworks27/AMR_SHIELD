@@ -1067,6 +1067,11 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
   const [drugMessage, setDrugMessage] = useState("");
   const [isSearchingDrugs, setIsSearchingDrugs] = useState(false);
 
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    window.location.reload();
+  }
+
   useEffect(() => {
     let cancelled = false;
 
@@ -2137,37 +2142,42 @@ function PredictionPage({ onBack }) {
   async function predictProfile(event) {
     event.preventDefault();
     setPredictionMessage("");
-    const temperature = Number(inputs.temperature);
-    const whiteBloodCells = Number(inputs.whiteBloodCells);
-    const rapidOnset = Number(inputs.onsetTimeline) <= 3;
-    const highInflammation = temperature >= 39 || whiteBloodCells >= 15000;
-    const symptomCount = inputs.symptoms.length;
-    const score = highInflammation ? 24 : 10;
-    const candidates = [
-      { name: "ESBL-producing Enterobacterales phenotype", score: score + (inputs.illnessSite === "Urinary" ? 20 : 6) + (inputs.symptoms.includes("Recent antibiotic exposure") ? 12 : 0) },
-      { name: "Carbapenem-resistant Gram-negative phenotype", score: score + (inputs.illnessSite === "Bloodstream" ? 18 : 4) + (rapidOnset ? 10 : 0) },
-      { name: "MRSA-compatible resistance phenotype", score: score + (inputs.illnessSite === "Skin and soft tissue" ? 20 : 5) + (inputs.symptoms.includes("Wound discharge") ? 12 : 0) },
-    ]
-      .map((candidate) => ({ ...candidate, score: Math.min(95, candidate.score + symptomCount * 3) }))
-      .sort((first, second) => second.score - first.score);
-    const topScore = candidates[0].score;
-    const ranked = candidates.map((candidate) => ({ ...candidate, confidence: Math.round((candidate.score / topScore) * Math.min(92, 55 + symptomCount * 4)) }));
-    setPrediction({ candidates: ranked, inputs: { ...inputs, temperature, whiteBloodCells } });
+    try {
+      const temperature = Number(inputs.temperature);
+      const whiteBloodCells = Number(inputs.whiteBloodCells);
+      const rapidOnset = Number(inputs.onsetTimeline) <= 3;
+      const highInflammation = temperature >= 39 || whiteBloodCells >= 15000;
+      const symptomCount = inputs.symptoms.length;
+      const score = highInflammation ? 24 : 10;
+      const candidates = [
+        { name: "ESBL-producing Enterobacterales phenotype", score: score + (inputs.illnessSite === "Urinary" ? 20 : 6) + (inputs.symptoms.includes("Recent antibiotic exposure") ? 12 : 0) },
+        { name: "Carbapenem-resistant Gram-negative phenotype", score: score + (inputs.illnessSite === "Bloodstream" ? 18 : 4) + (rapidOnset ? 10 : 0) },
+        { name: "MRSA-compatible resistance phenotype", score: score + (inputs.illnessSite === "Skin and soft tissue" ? 20 : 5) + (inputs.symptoms.includes("Wound discharge") ? 12 : 0) },
+      ]
+        .map((candidate) => ({ ...candidate, score: Math.min(95, candidate.score + symptomCount * 3) }))
+        .sort((first, second) => second.score - first.score);
+      const topScore = candidates[0].score;
+      const ranked = candidates.map((candidate) => ({ ...candidate, confidence: Math.round((candidate.score / topScore) * Math.min(92, 55 + symptomCount * 4)) }));
+      setPrediction({ candidates: ranked, inputs: { ...inputs, temperature, whiteBloodCells } });
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { error } = await supabase.from("prediction_runs").insert({
-        user_id: user.id,
-        illness_site: inputs.illnessSite,
-        temperature,
-        white_blood_cells: whiteBloodCells,
-        onset_days: Number(inputs.onsetTimeline),
-        symptoms: inputs.symptoms,
-        symptom_notes: inputs.symptomNotes,
-        top_candidate: ranked[0].name,
-        confidence: ranked[0].confidence,
-      });
-      if (error) setPredictionMessage("Prediction generated, but cloud audit storage is not ready yet.");
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { error } = await supabase.from("prediction_runs").insert({
+          user_id: user.id,
+          illness_site: inputs.illnessSite,
+          temperature,
+          white_blood_cells: whiteBloodCells,
+          onset_days: Number(inputs.onsetTimeline),
+          symptoms: inputs.symptoms,
+          symptom_notes: inputs.symptomNotes,
+          top_candidate: ranked[0].name,
+          confidence: ranked[0].confidence,
+        });
+        if (error) setPredictionMessage("Prediction generated, but cloud audit storage is not ready yet.");
+      }
+    } catch (error) {
+      console.error("Prediction generation failed:", error);
+      setPredictionMessage("Prediction failed. Please try again.");
     }
   }
 
@@ -2185,7 +2195,7 @@ function PredictionPage({ onBack }) {
           Enter immediate symptoms and basic parameters to generate a research prototype estimate before laboratory confirmation.
         </p>
 
-        <form className="prediction-form reveal" onSubmit={predictProfile}>
+        <form className="prediction-form" onSubmit={predictProfile}>
           <label>Site of illness
             <select name="illnessSite" value={inputs.illnessSite} onChange={updateInput}>
               <option>Respiratory</option>
@@ -2220,7 +2230,7 @@ function PredictionPage({ onBack }) {
         </form>
 
         {prediction && (
-          <section className="prediction-result reveal">
+          <section className="prediction-result">
             <div className="card-label">RANKED RESISTANCE PHENOTYPE CANDIDATES</div>
             <div className="prediction-chart-layout">
               <div className="candidate-bars" role="list" aria-label="Candidate confidence percentages">
@@ -2307,6 +2317,11 @@ function DoctorWorkspace({ onBack, onViewProfile }) {
   useEffect(() => {
     loadInquiries();
   }, []);
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    window.location.reload();
+  }
 
   function generateAmrId() {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -2502,6 +2517,11 @@ function ProfilePage({ role, onBack }) {
   const [loading, setLoading] = useState(true);
   const [profileError, setProfileError] = useState("");
   const [loadAttempt, setLoadAttempt] = useState(0);
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    window.location.reload();
+  }
 
   useEffect(() => {
     let cancelled = false;
