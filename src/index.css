@@ -3808,6 +3808,131 @@ button {
 
 
 /* =====================================================
+   INTERACTIVE HOVER EFFECTS
+===================================================== */
+
+.dashboard-section,
+.patient-record,
+.profile-card,
+.auth-card,
+.prediction-result,
+.patient-inquiry-panel,
+.ai-agent-panel,
+.reports-panel,
+.drug-database-panel {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-section:hover,
+.patient-record:hover,
+.profile-card:hover,
+.auth-card:hover,
+.prediction-result:hover,
+.patient-inquiry-panel:hover,
+.ai-agent-panel:hover,
+.reports-panel:hover,
+.drug-database-panel:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 55px rgba(30, 60, 60, 0.12);
+}
+
+.clinical-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.clinical-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(30, 60, 60, 0.1);
+  border-color: rgba(23, 77, 77, 0.18);
+}
+
+.inquiry-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inquiry-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(30, 60, 60, 0.1);
+}
+
+.saved-report {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.saved-report:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(30, 60, 60, 0.08);
+}
+
+.table-row {
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.table-row:hover {
+  background: #f5f2ed;
+  transform: translateX(4px);
+}
+
+.prediction-form,
+.profile-form,
+.report-form,
+.patient-inquiry-form {
+  transition: box-shadow 0.3s ease;
+}
+
+.prediction-form:hover,
+.profile-form:hover,
+.report-form:hover,
+.patient-inquiry-form:hover {
+  box-shadow: 0 12px 30px rgba(30, 60, 60, 0.08);
+}
+
+/* Staggered reveal delays */
+.reveal:nth-child(1) { transition-delay: 0s; }
+.reveal:nth-child(2) { transition-delay: 0.08s; }
+.reveal:nth-child(3) { transition-delay: 0.16s; }
+.reveal:nth-child(4) { transition-delay: 0.24s; }
+.reveal:nth-child(5) { transition-delay: 0.32s; }
+.reveal:nth-child(6) { transition-delay: 0.40s; }
+
+/* Auth tab indicator */
+.auth-tab {
+  position: relative;
+}
+
+.auth-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #2d6b58;
+  border-radius: 3px 3px 0 0;
+}
+
+/* Smooth page background */
+.dashboard-page {
+  background: linear-gradient(180deg, #fbf7f2 0%, #f7f3ee 40%, #fbf7f2 100%);
+}
+
+/* Prediction page special background */
+.prediction-page {
+  background: linear-gradient(180deg, #fbf7f2 0%, #f5faf6 50%, #fbf7f2 100%);
+}
+
+/* Profile page special background */
+.profile-section {
+  animation: fadeInUp 0.5s ease both;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* =====================================================
    SMALL SCREEN TREND
 ===================================================== */
 

@@ -466,7 +466,7 @@ function PortalPage({ onBack, onSelect }) {
 
       <main className="portal-container">
 
-        <div className="portal-heading">
+        <div className="portal-heading reveal">
 
           <div className="eyebrow">
             WELCOME TO AMR SHIELD
@@ -483,7 +483,7 @@ function PortalPage({ onBack, onSelect }) {
 
         </div>
 
-        <div className="portal-cards">
+        <div className="portal-cards reveal">
 
           {/* DOCTOR */}
 
@@ -578,7 +578,7 @@ function PortalPage({ onBack, onSelect }) {
         </div>
 
         <button
-          className="portal-back"
+          className="portal-back reveal"
           onClick={onBack}
         >
           ← Back to introduction
@@ -723,7 +723,7 @@ function AuthPage({
 
       <main className="auth-container">
 
-        <div className="auth-card">
+        <div className="auth-card reveal">
 
           <div className="auth-icon">
 
@@ -733,7 +733,7 @@ function AuthPage({
 
           </div>
 
-          <div className="auth-heading">
+          <div className="auth-heading reveal">
 
             <div className="eyebrow">
               AMR SHIELD • {roleName.toUpperCase()} PORTAL
@@ -753,7 +753,7 @@ function AuthPage({
 
           </div>
 
-          <div className="auth-tabs">
+          <div className="auth-tabs reveal">
 
             <button
               className={
@@ -779,7 +779,7 @@ function AuthPage({
 
           </div>
 
-          <div className="auth-form">
+          <div className="auth-form reveal">
 
             {mode === "signup" && (
 
@@ -932,7 +932,7 @@ function AuthPage({
 
           </div>
 
-          <div className="auth-security">
+          <div className="auth-security reveal">
 
             <span>🔒</span>
 
@@ -954,7 +954,7 @@ function AuthPage({
         </div>
 
         <button
-          className="portal-back"
+          className="portal-back reveal"
           onClick={onBack}
         >
           ← Back to access selection
@@ -995,7 +995,7 @@ function PatientInquiryPanel({ onPredict }) {
     }
   }
 
-  return <section className="patient-inquiry-panel"><div className="section-header"><div><div className="card-label">SHARE WITH YOUR CARE TEAM</div><h2>Describe your current problem</h2></div><div className="report-count">PRIVATE INQUIRY</div></div><form className="patient-inquiry-form" onSubmit={submitInquiry}><label>Problem / symptoms<textarea required name="symptoms" value={form.symptoms} onChange={updateField} placeholder="Describe symptoms, duration and severity" /></label><label>Site of illness<select name="site" value={form.site} onChange={updateField}><option>Urinary</option><option>Respiratory</option><option>Bloodstream</option><option>Skin and soft tissue</option><option>Gastrointestinal</option></select></label><label>Temperature (°C)<input name="temperature" type="number" min="30" max="45" step="0.1" value={form.temperature} onChange={updateField} placeholder="Optional" /></label><label>Previous antibiotics<input name="antibiotics" value={form.antibiotics} onChange={updateField} placeholder="Drug and approximate date" /></label><label>Allergies<input name="allergies" value={form.allergies} onChange={updateField} placeholder="Known allergies or None" /></label><label>Comorbidities<input name="comorbidities" value={form.comorbidities} onChange={updateField} placeholder="Relevant conditions or None" /></label><div className="inquiry-actions"><button className="primary-button" type="submit">Share inquiry <span>→</span></button><button className="text-button" type="button" onClick={onPredict}>Open resistance review</button>{message && <strong>{message}</strong>}</div></form></section>;
+  return <section className="patient-inquiry-panel reveal"><div className="section-header"><div><div className="card-label">SHARE WITH YOUR CARE TEAM</div><h2>Describe your current problem</h2></div><div className="report-count">PRIVATE INQUIRY</div></div><form className="patient-inquiry-form" onSubmit={submitInquiry}><label>Problem / symptoms<textarea required name="symptoms" value={form.symptoms} onChange={updateField} placeholder="Describe symptoms, duration and severity" /></label><label>Site of illness<select name="site" value={form.site} onChange={updateField}><option>Urinary</option><option>Respiratory</option><option>Bloodstream</option><option>Skin and soft tissue</option><option>Gastrointestinal</option></select></label><label>Temperature (°C)<input name="temperature" type="number" min="30" max="45" step="0.1" value={form.temperature} onChange={updateField} placeholder="Optional" /></label><label>Previous antibiotics<input name="antibiotics" value={form.antibiotics} onChange={updateField} placeholder="Drug and approximate date" /></label><label>Allergies<input name="allergies" value={form.allergies} onChange={updateField} placeholder="Known allergies or None" /></label><label>Comorbidities<input name="comorbidities" value={form.comorbidities} onChange={updateField} placeholder="Relevant conditions or None" /></label><div className="inquiry-actions"><button className="primary-button" type="submit">Share inquiry <span>→</span></button><button className="text-button" type="button" onClick={onPredict}>Open resistance review</button>{message && <strong>{message}</strong>}</div></form></section>;
 }
 
 function PatientAIAgent({ role = "patient" }) {
@@ -1031,7 +1031,7 @@ function PatientAIAgent({ role = "patient" }) {
     }
   }
 
-  return <section className="ai-agent-panel"><div className="careva-heading"><div className="careva-mascot" aria-label="Careva healthcare mascot" role="img"><div className="careva-antenna" /><div className="careva-head"><span>+</span><i /></div><div className="careva-body"><b>♡</b></div><div className="careva-arm careva-arm-left" /><div className="careva-arm careva-arm-right" /><div className="careva-foot careva-foot-left" /><div className="careva-foot careva-foot-right" /></div><div><div className="card-label">{role === "patient" ? "PATIENT SUPPORT AGENT" : "AMR INTELLIGENCE ASSISTANT"}</div><h2>Careva</h2><p className="careva-tagline">Your intelligent healthcare companion</p></div><span className="ai-status"><i /> Available</span></div><div className="ai-disclaimer">Information support only. Careva does not diagnose, prescribe or replace a clinician.</div><div className="ai-messages" aria-live="polite">{messages.map((message, index) => <div className={`ai-message ${message.from}`} key={`${message.from}-${index}`}>{message.text}</div>)}</div><form className="ai-form" onSubmit={askAgent}><input value={question} onChange={(event) => setQuestion(event.target.value)} placeholder={role === "doctor" ? "Ask Careva about reports, AST or patient review" : role === "hospital" ? "Ask Careva about AMR surveillance" : "Ask Careva about your symptoms, reports or visit"} aria-label="Ask Careva" /><button type="submit">Ask Careva <span>→</span></button></form></section>;
+  return <section className="ai-agent-panel reveal"><div className="careva-heading"><div className="careva-mascot" aria-label="Careva healthcare mascot" role="img"><div className="careva-antenna" /><div className="careva-head"><span>+</span><i /></div><div className="careva-body"><b>♡</b></div><div className="careva-arm careva-arm-left" /><div className="careva-arm careva-arm-right" /><div className="careva-foot careva-foot-left" /><div className="careva-foot careva-foot-right" /></div><div><div className="card-label">{role === "patient" ? "PATIENT SUPPORT AGENT" : "AMR INTELLIGENCE ASSISTANT"}</div><h2>Careva</h2><p className="careva-tagline">Your intelligent healthcare companion</p></div><span className="ai-status"><i /> Available</span></div><div className="ai-disclaimer">Information support only. Careva does not diagnose, prescribe or replace a clinician.</div><div className="ai-messages" aria-live="polite">{messages.map((message, index) => <div className={`ai-message ${message.from}`} key={`${message.from}-${index}`}>{message.text}</div>)}</div><form className="ai-form" onSubmit={askAgent}><input value={question} onChange={(event) => setQuestion(event.target.value)} placeholder={role === "doctor" ? "Ask Careva about reports, AST or patient review" : role === "hospital" ? "Ask Careva about AMR surveillance" : "Ask Careva about your symptoms, reports or visit"} aria-label="Ask Careva" /><button type="submit">Ask Careva <span>→</span></button></form></section>;
 }
 
 const defaultDrugMetadata = {
@@ -1503,7 +1503,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
 
         </div>
 
-        <section className="drug-database-panel">
+        <section className="drug-database-panel reveal">
           <div className="section-header">
             <div>
               <div className="card-label">PUBLIC AMR REFERENCE</div>
@@ -1550,7 +1550,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
         {role === "patient" && <PatientInquiryPanel onPredict={onPredict} />}
         <PatientAIAgent role={role} />
 
-        <section className="reports-panel">
+        <section className="reports-panel reveal">
 
           <div className="section-header">
             <div>
@@ -1616,7 +1616,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
             TOP CARDS
         ================================================= */}
 
-        <div className="top-cards">
+        <div className="top-cards reveal">
 
           {/* MOST RESISTANT STRAIN */}
 
@@ -1712,7 +1712,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
             DRUG × ORGANISM HEATMAP
         ================================================= */}
 
-        <section className="dashboard-section">
+        <section className="dashboard-section reveal">
 
           <div className="section-header">
 
@@ -1845,7 +1845,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
             BACTERIA VS DRUG CHART
         ================================================= */}
 
-        <section className="dashboard-section">
+        <section className="dashboard-section reveal">
 
           <div className="section-header">
 
@@ -1958,7 +1958,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
             FIRST-LINE AGENTS
         ================================================= */}
 
-        <section className="dashboard-section">
+        <section className="dashboard-section reveal">
 
           <div className="section-header">
 
@@ -2178,7 +2178,7 @@ function PredictionPage({ onBack }) {
           Enter immediate symptoms and basic parameters to generate a research prototype estimate before laboratory confirmation.
         </p>
 
-        <form className="prediction-form" onSubmit={predictProfile}>
+        <form className="prediction-form reveal" onSubmit={predictProfile}>
           <label>Site of illness
             <select name="illnessSite" value={inputs.illnessSite} onChange={updateInput}>
               <option>Respiratory</option>
@@ -2213,7 +2213,7 @@ function PredictionPage({ onBack }) {
         </form>
 
         {prediction && (
-          <section className="prediction-result">
+          <section className="prediction-result reveal">
             <div className="card-label">RANKED RESISTANCE PHENOTYPE CANDIDATES</div>
             <div className="prediction-chart-layout">
               <div className="candidate-bars" role="list" aria-label="Candidate confidence percentages">
@@ -2428,9 +2428,9 @@ function DoctorWorkspace({ onBack, onViewProfile }) {
   return <div className="dashboard-page doctor-workspace">
     <header className="dashboard-nav"><div className="clickable-logo" onClick={onBack}><Logo /></div><div className="dashboard-nav-right"><span className="data-source"><span className="source-dot" /> CLINICAL WORKSPACE</span><button className="back-button" onClick={onViewProfile}>My Profile</button><button className="back-button" onClick={onBack}>← Back</button></div></header>
     <main className="doctor-content">
-      <div className="dashboard-heading"><div><div className="eyebrow">AMR SHIELD • DOCTOR PORTAL</div><h1>Patient clinical record</h1><p>Review the patient's longitudinal antimicrobial history before creating a treatment plan.</p></div><div className="data-badge"><span>●</span> {patients.length} ACTIVE RECORDS</div></div>
+      <div className="dashboard-heading reveal"><div><div className="eyebrow">AMR SHIELD • DOCTOR PORTAL</div><h1>Patient clinical record</h1><p>Review the patient's longitudinal antimicrobial history before creating a treatment plan.</p></div><div className="data-badge"><span>●</span> {patients.length} ACTIVE RECORDS</div></div>
       {inquiryError && <p className="report-message" style="color:#b85c49;">{inquiryError}</p>}
-      <section className="patient-inquiry-feed">
+      <section className="patient-inquiry-feed reveal">
         <div className="section-header">
           <div>
             <div className="card-label">PATIENT-SHARED DATA</div>
@@ -2446,7 +2446,7 @@ function DoctorWorkspace({ onBack, onViewProfile }) {
         {inquiries.length === 0 && !inquiryError && <p className="report-message">No inquiries received yet. Ask patients to submit from their dashboard while signed in.</p>}
         {inquiries.map((inquiry) => <article className="inquiry-item" key={inquiry.id}><div><strong>{inquiry.illness_site} concern</strong><span>{inquiry.symptoms}</span><small>Submitted {new Date(inquiry.created_at).toLocaleString()}</small></div><div className="inquiry-actions"><button className="back-button" onClick={() => openInquiry(inquiry)}>Open patient record</button><button className="back-button" onClick={() => setPlan(`Patient inquiry: ${inquiry.symptoms}. Previous antibiotics: ${inquiry.previous_antibiotics || "Not provided"}. Allergies: ${inquiry.allergies || "Not provided"}.`)}>Review in plan</button></div></article>)}
       </section>
-        <div className="doctor-layout">
+        <div className="doctor-layout reveal">
           <aside className="patient-sidebar">
             <div className="card-label">PATIENT DIRECTORY</div>
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search name or unique ID" aria-label="Search patients" />
@@ -2470,7 +2470,7 @@ function DoctorWorkspace({ onBack, onViewProfile }) {
               <button className="add-patient-button" onClick={startAddPatient}>+ Add patient</button>
             )}
           </aside>
-        <section className="patient-record"><div className="patient-identity"><div className="patient-avatar">{patient.name.split(" ").map((part) => part[0]).join("")}</div><div><div className="card-label">UNIQUE PATIENT ID</div><h2>{patient.name}</h2><p>{patient.id} · {patient.age} years · {patient.sex} · Blood group {patient.bloodGroup}</p><span className="record-phone">{patient.phone}</span></div><div className="patient-alert"><strong>{patient.allergies === "Penicillin" ? "ALLERGY ALERT" : "NO ALLERGY ALERT"}</strong><span>{patient.allergies}</span></div></div>
+        <section className="patient-record reveal"><div className="patient-identity"><div className="patient-avatar">{patient.name.split(" ").map((part) => part[0]).join("")}</div><div><div className="card-label">UNIQUE PATIENT ID</div><h2>{patient.name}</h2><p>{patient.id} · {patient.age} years · {patient.sex} · Blood group {patient.bloodGroup}</p><span className="record-phone">{patient.phone}</span></div><div className="patient-alert"><strong>{patient.allergies === "Penicillin" ? "ALLERGY ALERT" : "NO ALLERGY ALERT"}</strong><span>{patient.allergies}</span></div></div>
           <nav className="record-tabs">{[["overview", "Patient history"], ["investigations", "Reports & cultures"], ["treatment", "Symptoms & treatment plan"], ["assessment", "Doctor assessment"]].map(([value, label]) => <button className={activeTab === value ? "active" : ""} key={value} onClick={() => setActiveTab(value)}>{label}</button>)}</nav>
           <div className="clinical-grid">{detailSections[activeTab].map(([label, value]) => <article className="clinical-item" key={label}><div className="card-label">{label}</div><p>{value}</p></article>)}</div>
           {activeTab === "treatment" && <textarea className="plan-input" value={plan} onChange={(event) => setPlan(event.target.value)} placeholder="Add treatment plan notes, follow-up timing or escalation criteria" />}
@@ -2659,7 +2659,7 @@ function ProfilePage({ role, onBack }) {
           </div>
         )}
         {profile && !loading && !profileError && (
-          <section className="profile-section">
+          <section className="profile-section reveal">
             <div className="profile-card">
               <div className="profile-header">
                 <div className="profile-id">
@@ -2733,6 +2733,26 @@ function App() {
   const [role, setRole] = useState(null);
 
   const [restoring, setRestoring] = useState(true);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    const timeout = setTimeout(() => {
+      document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+    }, 50);
+    return () => {
+      clearTimeout(timeout);
+      observer.disconnect();
+    };
+  }, [page]);
 
   useEffect(() => {
     let mounted = true;
