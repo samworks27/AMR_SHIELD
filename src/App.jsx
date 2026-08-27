@@ -2774,26 +2774,33 @@ function App() {
   useEffect(() => {
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const timeout = setTimeout(() => {
       if (!mounted) return;
-      if (session?.user) {
-        supabase.from("profiles").select("role").eq("id", session.user.id).single()
-          .then(({ data }) => {
-            if (!mounted) return;
-            if (data?.role) {
-              setRole(data.role);
-              setPage("dashboard");
-            }
-            setRestoring(false);
-          })
-          .catch(() => {
-            if (!mounted) return;
-            setRestoring(false);
-          });
-      } else {
+      setRestoring(false);
+    }, 3000);
+
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        if (!mounted) return;
+        clearTimeout(timeout);
+        if (session?.user) {
+          return supabase.from("profiles").select("role").eq("id", session.user.id).single();
+        }
+        return null;
+      })
+      .then(({ data }) => {
+        if (!mounted) return;
+        if (data?.role) {
+          setRole(data.role);
+          setPage("dashboard");
+        }
         setRestoring(false);
-      }
-    });
+      })
+      .catch(() => {
+        if (!mounted) return;
+        clearTimeout(timeout);
+        setRestoring(false);
+      });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
@@ -2805,20 +2812,24 @@ function App() {
               setRole(data.role);
               setPage("dashboard");
             }
+            setRestoring(false);
           })
           .catch(() => {
             if (!mounted) return;
             setRole(null);
             setPage("landing");
+            setRestoring(false);
           });
       } else {
         setRole(null);
         setPage("landing");
+        setRestoring(false);
       }
     });
 
     return () => {
       mounted = false;
+      clearTimeout(timeout);
       subscription.unsubscribe();
     };
   }, []);
@@ -2911,6 +2922,24 @@ function App() {
 
   return (
     <>
+      {restoring && (
+        <div style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#fbf7f2'
+        }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            border: '3px solid rgba(23, 77, 77, 0.1)',
+            borderTopColor: '#174d4d',
+            borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite'
+          }} />
+        </div>
+      )}
       {!restoring && renderPage()}
     </>
   );
