@@ -2795,7 +2795,7 @@ function App() {
         if (session?.user) {
           return supabase.from("profiles").select("role").eq("id", session.user.id).single();
         }
-        return null;
+        return { data: null };
       })
       .then(({ data }) => {
         if (!mounted) return;
