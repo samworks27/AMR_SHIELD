@@ -4185,30 +4185,13 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Animated underline for headings */
-h1, h2, h3 {
-  position: relative;
+/* Simple underline for specific headings only */
+.heading-underline {
   display: inline-block;
+  padding-bottom: 10px;
+  border-bottom: 3px solid;
+  border-image: linear-gradient(90deg, #e97859, #4da87a) 1;
   margin-bottom: 18px;
-}
-
-h1::after,
-h2::after {
-  content: "";
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 3px;
-  background: linear-gradient(90deg, #e97859, #4da87a);
-  border-radius: 2px;
-  animation: underlineGrow 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes underlineGrow {
-  from { transform: translateX(-50%) scaleX(0); }
-  to { transform: translateX(-50%) scaleX(1); }
 }
 
 /* Morphing shape animation */
