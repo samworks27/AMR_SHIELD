@@ -1738,7 +1738,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
 
           <div className="heatmap-wrapper">
 
-            <div className="heatmap">
+            <div className="heatmap" style={{ gridTemplateColumns: `1.6fr repeat(${drugs.length}, 1fr)` }}>
 
               {/* HEADER */}
 
@@ -1781,7 +1781,7 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
                         className={`heat-cell ${resistanceClass}`}
                       >
 
-                        {rate}%
+                        {Number.isFinite(Number(rate)) ? `${Number(rate)}%` : "—"}
 
                         <div className="tooltip">
 
@@ -1794,9 +1794,9 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
                           </span>
 
                           <small>
-                            Resistance rate: {rate}%
+                            Resistance rate: {Number.isFinite(Number(rate)) ? `${Number(rate)}%` : "No data"}
                             <br />
-                            Status: {getResistanceLabel(rate)}
+                            Status: {Number.isFinite(Number(rate)) ? getResistanceLabel(Number(rate)) : "Unavailable"}
                           </small>
 
                         </div>
