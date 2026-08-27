@@ -1464,6 +1464,14 @@ function ResistanceDashboard({ role, onBack, onPredict, onViewProfile }) {
             ← Back
           </button>
 
+          <button
+            className="back-button"
+            onClick={handleSignOut}
+            style={{ color: "#b85c49" }}
+          >
+            Sign out
+          </button>
+
         </div>
 
       </header>
@@ -2425,7 +2433,7 @@ function DoctorWorkspace({ onBack, onViewProfile }) {
   };
 
   return <div className="dashboard-page doctor-workspace">
-    <header className="dashboard-nav"><div className="clickable-logo" onClick={onBack}><Logo /></div><div className="dashboard-nav-right"><span className="data-source"><span className="source-dot" /> CLINICAL WORKSPACE</span><button className="back-button" onClick={onViewProfile}>My Profile</button><button className="back-button" onClick={onBack}>← Back</button></div></header>
+    <header className="dashboard-nav"><div className="clickable-logo" onClick={onBack}><Logo /></div><div className="dashboard-nav-right"><span className="data-source"><span className="source-dot" /> CLINICAL WORKSPACE</span><button className="back-button" onClick={onViewProfile}>My Profile</button><button className="back-button" onClick={handleSignOut} style={{ color: "#b85c49" }}>Sign out</button><button className="back-button" onClick={onBack}>← Back</button></div></header>
     <main className="doctor-content">
       <div className="dashboard-heading reveal"><div><div className="eyebrow">AMR SHIELD • DOCTOR PORTAL</div><h1>Patient clinical record</h1><p>Review the patient's longitudinal antimicrobial history before creating a treatment plan.</p></div><div className="data-badge"><span>●</span> {patients.length} ACTIVE RECORDS</div></div>
       {inquiryError && <p className="report-message" style="color:#b85c49;">{inquiryError}</p>}
@@ -2639,6 +2647,7 @@ function ProfilePage({ role, onBack }) {
         <div className="clickable-logo" onClick={onBack}><Logo /></div>
         <div className="header-actions">
           <span className="system-status"><span className="status-dot"></span> MY PROFILE</span>
+          <button className="back-button" onClick={handleSignOut} style={{ color: "#b85c49" }}>Sign out</button>
         </div>
       </header>
       <main className="dashboard-content">
