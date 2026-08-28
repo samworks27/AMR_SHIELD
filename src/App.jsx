@@ -2674,7 +2674,7 @@ function ProfilePage({ role, onBack }) {
         <div className="dashboard-heading">
           <div>
             <div className="eyebrow">AMR SHIELD • {role ? role.toUpperCase() : "USER"} PORTAL</div>
-            <h1>My Profile</h1>
+              <h1 className="heading-underline">My Profile</h1>
             <p>View and update your personal and clinical information.</p>
           </div>
         </div>
@@ -2687,7 +2687,7 @@ function ProfilePage({ role, onBack }) {
           </div>
         )}
         {profile && !loading && !profileError && (
-          <section className="profile-section reveal">
+          <section className="profile-section">
             <div className="profile-card">
               <div className="profile-header">
                 <div className="profile-id">
