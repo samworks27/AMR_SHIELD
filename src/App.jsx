@@ -2780,6 +2780,26 @@ function App() {
     setPage(newPage);
   }
 
+  async function checkExistingSession() {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data } = await supabase.from("profiles").select("role").eq("id", session.user.id).single();
+        if (data?.role) {
+          setRole(data.role);
+        }
+      }
+    } catch {
+      // ignore auth check errors
+    } finally {
+      setRestoring(false);
+    }
+  }
+
+  useEffect(() => {
+    checkExistingSession();
+  }, []);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -2800,75 +2820,45 @@ function App() {
     };
   }, [page]);
 
-  useEffect(() => {
-    let mounted = true;
-
-    const timeout = setTimeout(() => {
-      if (!mounted) return;
-      setRestoring(false);
-    }, 3000);
-
-    supabase.auth.getSession()
-      .then(({ data: { session } }) => {
-        if (!mounted) return;
-        clearTimeout(timeout);
-        if (session?.user) {
-          return supabase.from("profiles").select("role").eq("id", session.user.id).single();
-        }
-        return { data: null };
-      })
-      .then(({ data }) => {
-        if (!mounted) return;
+  async function checkExistingSession() {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data } = await supabase.from("profiles").select("role").eq("id", session.user.id).single();
         if (data?.role) {
           setRole(data.role);
-          setPage("dashboard");
         }
-        setRestoring(false);
-      })
-      .catch(() => {
-        if (!mounted) return;
-        clearTimeout(timeout);
-        setRestoring(false);
-      });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!mounted) return;
-      if (session?.user) {
-        supabase.from("profiles").select("role").eq("id", session.user.id).single()
-          .then(({ data }) => {
-            if (!mounted) return;
-            if (data?.role) {
-              setRole(data.role);
-              setPage("dashboard");
-            }
-            setRestoring(false);
-          })
-          .catch(() => {
-            if (!mounted) return;
-            setRole(null);
-            setPage("landing");
-            setRestoring(false);
-          });
-      } else {
-        setRole(null);
-        setPage("landing");
-        setRestoring(false);
       }
-    });
+    } catch {
+      // ignore auth check errors
+    } finally {
+      setRestoring(false);
+    }
+  }
 
-    return () => {
-      mounted = false;
-      clearTimeout(timeout);
-      subscription.unsubscribe();
-    };
+  useEffect(() => {
+    checkExistingSession();
   }, []);
 
-  function selectRole(selectedRole) {
-
-    setRole(selectedRole);
-
-    navigateTo("auth");
-  }
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    const timeout = setTimeout(() => {
+      document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+    }, 50);
+    return () => {
+      clearTimeout(timeout);
+      observer.disconnect();
+    };
+  }, [page]);
 
   function goToDashboard() {
 
