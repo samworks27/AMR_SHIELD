@@ -2767,7 +2767,26 @@ function App() {
 
   const [page, setPage] = useState("landing");
 
-  const [role, setRole] = useState(null);
+  const [role, setRole] = useState(() => {
+    try {
+      const stored = localStorage.getItem("amr_shield_role");
+      return stored || null;
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      if (role) {
+        localStorage.setItem("amr_shield_role", role);
+      } else {
+        localStorage.removeItem("amr_shield_role");
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }, [role]);
 
   const [restoring, setRestoring] = useState(true);
 
@@ -2788,46 +2807,6 @@ function App() {
     setDirection(isForward ? "forward" : "back");
     setPage(newPage);
   }
-
-  async function checkExistingSession() {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data } = await supabase.from("profiles").select("role").eq("id", session.user.id).single();
-        if (data?.role) {
-          setRole(data.role);
-        }
-      }
-    } catch {
-      // ignore auth check errors
-    } finally {
-      setRestoring(false);
-    }
-  }
-
-  useEffect(() => {
-    checkExistingSession();
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-    const timeout = setTimeout(() => {
-      document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
-    }, 50);
-    return () => {
-      clearTimeout(timeout);
-      observer.disconnect();
-    };
-  }, [page]);
 
   async function checkExistingSession() {
     try {
