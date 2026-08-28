@@ -2900,7 +2900,7 @@ function App() {
               : <ResistanceDashboard role={role} onPredict={() => navigateTo("prediction")} onBack={() => navigateTo("auth")} onViewProfile={goToProfile} />
           );
         case "profile":
-          return role && (
+          return (
             <ProfilePage
               role={role}
               onBack={() => navigateTo("dashboard")}
