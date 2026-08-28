@@ -2529,29 +2529,30 @@ function ProfilePage({ role, onBack }) {
       setLoading(true);
       setProfileError("");
       try {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) throw userError;
-        if (!user) throw new Error("Your session has expired. Please sign in again.");
-
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) {
+          setProfileError("Please sign in to view your profile.");
+          return;
+        }
         const { data, error: profileQueryError } = await supabase
           .from("profiles")
           .select("*")
-          .eq("id", user.id)
+          .eq("id", session.user.id)
           .maybeSingle();
         if (profileQueryError) throw profileQueryError;
 
         let loadedProfile = data;
         if (!loadedProfile) {
-          const meta = user.user_metadata || {};
+          const meta = session.user.user_metadata || {};
           const { data: created, error: profileInsertError } = await supabase
             .from("profiles")
             .insert({
-              id: user.id,
-              full_name: meta.name || user.email || "AMR SHIELD User",
+              id: session.user.id,
+              full_name: meta.name || session.user.email || "AMR SHIELD User",
               date_of_birth: meta.date_of_birth || "1970-01-01",
               contact_number: meta.contact_number || "Not provided",
               aadhaar_last4: /^\d{4}$/.test(meta.aadhaar_last4 || "") ? meta.aadhaar_last4 : "0000",
-              aadhaar_hash: meta.aadhaar_hash || await hashAadhaar(`${user.id}:${user.email || ""}`),
+              aadhaar_hash: meta.aadhaar_hash || await hashAadhaar(`${session.user.id}:${session.user.email || ""}`),
               allergies: meta.allergies || "",
               comorbidities: meta.comorbidities || "",
               role: meta.role || role || "patient",
@@ -2679,11 +2680,19 @@ function ProfilePage({ role, onBack }) {
           </div>
         </div>
 
-        {loading && <p>Loading profile...</p>}
+        {loading && (
+          <div style={{ padding: "40px", textAlign: "center", color: "#527070" }}>
+            <div className="loading-spinner" style={{ margin: "0 auto 18px" }} />
+            <p>Loading profile...</p>
+          </div>
+        )}
         {profileError && (
-          <div className="profile-error">
-            <p>{profileError}</p>
-            <button className="primary-button" type="button" onClick={() => setLoadAttempt((attempt) => attempt + 1)}>Retry</button>
+          <div className="profile-error" style={{ padding: "24px", textAlign: "center" }}>
+            <p style={{ color: "#b85c49", marginBottom: "12px" }}>{profileError}</p>
+            <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
+              <button className="primary-button" type="button" onClick={() => { setLoadAttempt((attempt) => attempt + 1); setProfileError(""); }}>Retry</button>
+              <button className="text-button" type="button" onClick={handleSignOut}>Sign out and sign in again</button>
+            </div>
           </div>
         )}
         {profile && !loading && !profileError && (

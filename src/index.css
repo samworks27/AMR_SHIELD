@@ -3176,6 +3176,8 @@ button {
 
 .profile-section {
   margin-top: 24px;
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 .profile-card {
